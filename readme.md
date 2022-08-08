@@ -9,9 +9,24 @@ The tool opens a folder project that contains:
 - a `manifest.json` file which specifies the languages of the projects
 - any number of subfolders containing `<locale-code>.json` files
 
-## manifest.json
+## Project manifest
 
-The manifest inside a folder project specifies the language of reference and all the "foreign" ones. For each of them, the locale code and name must be provided. The `./<subfolder>/<reference.code>.json` file is taken as reference texts (and won't be changed in the file system access version). Example:
+The manifest inside a folder project specifies the language of reference and all the "foreign" ones. For each of them, the locale code and name must be provided. The `./<subfolder>/<reference.code>.json` file is taken as reference texts (and won't be changed in the file system access version).
+
+Typescript type definition:
+
+```ts
+interface LanguageLocale {
+    code: string;
+    name: string;
+}
+interface Manifest {
+    reference: LanguageLocale;
+    foreign: LanguageLocale[];
+}
+```
+
+Example:
 
 ```json
 {
@@ -32,9 +47,17 @@ The manifest inside a folder project specifies the language of reference and all
 }
 ```
 
-## \<locale-code\>.json
+## Texts JSON files
 
-JSON files containing the texts is an object `A` whose values can be either strings or other objects `A`. Each object `A` defines an increasing nesting in the editor. An example of a possible structure is the following:
+They are the `<locale-code>.json` files inside the subfolders of the project folder, and their typescript interface description would be the following one.
+
+```ts
+interface Texts {
+    [key: string]: string|Texts;
+} 
+```
+
+Example:
 
 ```json
 {
@@ -54,3 +77,5 @@ JSON files containing the texts is an object `A` whose values can be either stri
     }
 }
 ```
+
+The only mandatory file inside each subfolder is the one related to the reference language (`<manifest.reference.code>.json`).
