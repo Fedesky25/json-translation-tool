@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON translation tool</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Source+Code+Pro:ital,wght@0,400;1,500&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        body {
+            background-color: #fbfbfb;
+            padding: 2rem;
+            padding-bottom: 6rem;
+        }
+        h1,h2 {margin-bottom: .6em;}
+        section {margin-top: 4rem;}
+        p,ol,ul {
+            max-width: 65ch;
+            margin-bottom: .8rem;
+        }
+        ol,ul {padding-left: 3ch;}
+        li::marker, a {color: cadetblue;}
+        span.filename {
+            font-family: 'Source Code Pro', monospace;
+            background-color: #e0e0e0;
+            border-radius: .3em;
+            padding-inline: .3em;
+        }
+        code {
+            display: block;
+            width: fit-content;
+            padding: 1rem 1.3rem;
+            border-radius: .6rem;
+            background-color: #eee;
+            font-family: 'Source Code Pro', monospace;
+            margin-bottom: .8rem;
+            line-height: 1.5em;
+        }
+        code * {font-family: 'Source Code Pro', monospace;}
+        .keyword {color: darkorchid;}
+        .comment {color: dimgrey;}
+        .type {
+            color: coral;
+            font-style: italic;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <h1>JSON translation tool</h1>
+    <p>Client-side editor to translate JSON files (inside of a project folder) with texts in other languages. There are two version:</p>
+    <ol>
+        <li>The <a href="./file-system-access/index.html">recommended one</a> uses the new experimental File System Access API</li>
+        <li>The <a href="./input-file/index.html">better-browser-supported one</a> uses an input of files (whith webkitfolder)</li>
+    </ol>
+
+    <section aria-labelledby="file-structure">
+        <h2 id="file-structure">Expected file structure</h2>
+        <p>The tool opens a folder project that contains:</p>
+        <ul>
+            <li>a <span class="filename">manifest.json</span> file which specifies the languages of the projects</li>
+            <li>any number of subfolders containing <span class="filename">&lt;locale-code&gt;.json</span> files</li>
+        </ul>
+    </section>
+    <section aria-labelledby="manifest">
+        <h2 id="manifest">Project manifest</h2>
+        <p>The manifest inside a folder project specifies the language of reference and all the "foreign" ones. For each of them, the locale code and name must be provided. The <span class="filename">./&lt;subfolder&gt;/&lt;manifest.reference.code&gt;.json</span> file is taken as reference texts (and won't be changed in the file system access version). The typescript type definition of the manifest is the following:</p>
+        <code>
+            <span class="keyword">interface</span> <span class="type">LanguageLocale</span> {<br>
+            &nbsp;&nbsp;code: <span class="type">string</span>; <span class="comment">// e.g. "en", "it", ...</span><br>
+            &nbsp;&nbsp;name: <span class="type">string</span>; <span class="comment">// e.g. "English", "Italiano", ...</span><br>
+            }<br>
+            <span class="keyword">interface</span> <span class="type">Manifest</span> {<br>
+            &nbsp;&nbsp;reference: <span class="type">LanguageLocale</span>;<br>
+            &nbsp;&nbsp;foreign: <span class="type">LanguageLocale</span>[];<br>
+            }
+        </code>
+    </section>
+    <section aria-labelledby="texts">
+        <h2 id="texts">Texts JSON files</h2>
+        <p>They are the <span class="filename">&lt;locale-code&gt;.json</span> files inside the subfolders of the project folder, and their typescript interface description would be the following one.</p>
+        <code>
+            <span class="keyword">interface</span> <span class="type">Texts</span> {<br>
+            &nbsp;&nbsp;[key: <span class="type">string</span>]: <span class="type">string</span>|<span class="type">Texts</span>;<br>
+            }
+        </code>
+        <p>The only mandatory file inside each subfolder is the one related to the reference language (<span class="filename">&lt;manifest.reference.code&gt;.json</span>).</p>
+    </section>
+</body>
+</html>
