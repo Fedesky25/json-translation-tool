@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation tool</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        body.blur { opacity: .5; }
+        .error {
+            color: rgb(156, 24, 51);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        form {
+            max-width: fit-content;
+            margin: 3rem auto;
+        }
+        fieldset {
+            padding: .6rem;
+            margin-bottom: 1rem;
+        }
+        legend {
+            padding-inline: .4ch;
+        }
+        button[type="submit"] {
+            display: block;
+            margin: 1.5rem auto;
+            padding: .3rem .6rem;
+            font-size: 1rem;
+        }
+        button[type="button"] {
+            border: none;
+            border-radius: .7rem;
+            background-color: cadetblue;
+            color: white;
+            padding: .7rem 1.4rem;
+            cursor: pointer;
+            font-size: 1.15rem;
+            font-weight: 500;
+        }
+        .center {
+            display: block;
+            width: fit-content;
+            margin: 50vh auto 0 auto;
+            transform: translateY(-50%);
+        }
+        #grid {
+            --cols: 1;
+            display: grid;
+            grid-template-columns: minmax(25ch, auto) repeat(var(--cols), 25ch) 1fr;
+            align-items: center;
+        }
+        .head {
+            font-size: 2rem;
+            text-align: center;
+            font-weight: 700;
+            color: cadetblue;
+            position: sticky;
+            top: 0;
+            background-color: #fafafa;
+            z-index: 10;
+            border-bottom: 2px solid #8886;
+        }
+        .subsec {
+            grid-column: 1/-1;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #777;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+        .ref {
+            grid-column: 1;
+            justify-self: start;
+            padding-right: 1.5rem;
+        }
+        .subsec, .ref {
+            --nesting: 0;
+            padding-left: calc(var(--nesting) * 1rem);
+        }
+        .field { padding: .3rem; }
+        .field.missing { position: relative; }
+        .field.missing::after {
+            content: '!';
+            position: absolute;
+            right: .8rem;
+            top: calc(.6rem + 2px);
+            color: rgb(156, 24, 51);
+            font-weight: 800;
+            font-size: 1rem;
+        }
+        input[type="text"] {
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 400;
+            padding: .3em .5em;
+            border-radius: .3em;
+            border: 2px solid #ddd;
+            background-color: white;
+            width: 100%;
+        }
+        input[type="text"]:focus {
+            border-color: cadetblue;
+            outline: none;
+        }
+        #confirm {
+            position: fixed;
+            z-index: 100;
+            right: 1.5rem;
+            bottom: 1.5rem;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <form id="selection" class="hidden">
+        <fieldset>
+            <legend>Folder</legend>
+            <select id="folder" name="folder"></select>
+        </fieldset>
+        <fieldset id="languages">
+            <legend>Lingue</legend>
+        </fieldset>
+        <button type="submit">Carica</button>
+    </form>
+    <div id="grid"></div>
+    <button id="confirm" type="button" class="hidden" disabled>Confirm</button>
+
+    <script src="./script.js" defer></script>
+</body>
+</html>

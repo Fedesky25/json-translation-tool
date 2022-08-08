@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        body {
+            background-color: #fafafa;
+            padding: 1.5rem;
+        }
+        .hidden {
+            display: none;
+        }
+        form {
+            max-width: fit-content;
+            margin: 3rem auto;
+        }
+        fieldset {
+            padding: .6rem;
+            margin-bottom: 1rem;
+        }
+        legend {
+            padding-inline: .4ch;
+        }
+        button[type="submit"] {
+            display: block;
+            margin: 1.5rem auto;
+            padding: .3rem .6rem;
+            font-size: 1rem;
+        }
+        #grid {
+            --cols: 1;
+            display: grid;
+            grid-template-columns: minmax(25ch, auto) repeat(var(--cols), 25ch) 1fr;
+            align-items: center;
+        }
+        .head {
+            font-size: 2rem;
+            text-align: center;
+            font-weight: 700;
+            color: cadetblue;
+            position: sticky;
+            top: 0;
+            background-color: #fafafa;
+            z-index: 10;
+            border-bottom: 2px solid #8886;
+        }
+        .subsec {
+            grid-column: 1/-1;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #777;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+        .ref {
+            grid-column: 1;
+            justify-self: start;
+            padding-right: 1.5rem;
+            /* background-color: #fafafa; */
+        }
+        .subsec, .ref {
+            --nesting: 0;
+            padding-left: calc(var(--nesting) * 1rem);
+            /* position: sticky;
+            left: 1.5rem;
+            z-index: 5; */
+        }
+        .field {
+            padding: .3rem;
+        }
+        .field.missing {
+            position: relative;
+        }
+        .field.missing::after {
+            content: '!';
+            position: absolute;
+            right: .8rem;
+            top: calc(.6rem + 2px);
+            color: rgb(156, 24, 51);
+            font-weight: 800;
+            font-size: 1rem;
+        }
+        input[type="text"] {
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 400;
+            padding: .3em .5em;
+            border-radius: .3em;
+            border: 2px solid #ddd;
+            background-color: white;
+            width: 100%;
+        }
+        input[type="text"].missing {
+            border-color: rgb(156, 24, 51, .5);
+        }
+        input[type="text"]:focus {
+            border-color: cadetblue;
+            outline: none;
+        }
+        input[type="text"].short {
+            width: 20ch;
+        }
+        .error {
+            margin: 4rem auto;
+            width: fit-content;
+            color: rgb(156, 24, 51);
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+        #confirm {
+            position: fixed;
+            z-index: 100;
+            right: 1.5rem;
+            bottom: 1.5rem;
+        }
+        #confirm:disabled {
+            display: none;
+        }
+        button[type="button"] {
+            border: none;
+            border-radius: .7rem;
+            background-color: cadetblue;
+            color: white;
+            padding: .7rem 1.4rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        #downloads {
+            display: flex;
+            flex-direction: column;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <form class="hideable" id="project">
+        <fieldset>
+            <legend>Project</legend>
+            <input type="file" webkitdirectory>
+        </fieldset>
+        <button type="submit">Carica</button>
+    </form>
+
+    <form class="hidden" id="selection">
+        <fieldset>
+            <legend>Folder</legend>
+            <select id="folder" name="folder"></select>
+        </fieldset>
+        <fieldset id="languages">
+            <legend>Lingue</legend>
+        </fieldset>
+        <button type="submit">Carica</button>
+    </form>
+
+    <div id="grid"></div>
+    <button id="confirm" type="button" disabled>Confirm</button>
+    <div id="results" class="hidden">
+        <h3>Download the files</h3>
+        <div id="downloads"></div>
+        <button type="button" id="back">Back</button>
+    </div>
+    <script src="./script.js" defer></script>
+</body>
+</html>
