@@ -316,16 +316,24 @@ function head_el(text) {
     return div;
 }
 
+/**@typedef {HTMLInputElement|HTMLTextAreaElement} Inputy */
+
 /**
  * 
  * @param {string} lang 
  * @param {string} field 
  * @param {string} value 
- * @returns 
+ * @returns {Inputy}
  */
 function input_el(lang, field, value) {
-    const input = document.createElement("input");
-    input.type = "text";
+    /**@type {Inputy}*/let input;
+    if(value.length > 30) {
+        input = document.createElement("textarea");
+        input.setAttribute("rows", Math.ceil(value.length/30));
+    } else {
+        input = document.createElement("input");
+        input.type = "text";
+    }
     input.value = value;
     input.setAttribute("data-lang", lang);
     input.setAttribute("data-field", field);
@@ -338,12 +346,12 @@ function input_el(lang, field, value) {
     return div;
 }
 
-/**@this {HTMLInputElement} */
+/**@this {Inputy} */
 function is_missing() {
     this.parentElement.classList.toggle("missing", !this.value);
 }
 
-/**@this {HTMLInputElement} */
+/**@this {Inputy} */
 function on_change() {
     const path = this.getAttribute("data-field").split('.');
     let obj = texts[this.getAttribute("data-lang")];
@@ -365,7 +373,7 @@ function go_to_dowloads() {
 function create_download_link(locale) {
     const filename = `${locale}.json`;
     const a = document.createElement('a');
-    a.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(texts[locale])));
+    a.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(texts[locale], null, 4)));
     a.setAttribute('download', filename);
     a.textContent = filename;
     return a;

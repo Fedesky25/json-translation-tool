@@ -231,11 +231,12 @@ async function setup_editor(dir_handle, ref, sel_foreign) {
 async function save_json(dir_handle, code, obj) {
     const handle = await dir_handle.getFileHandle(code + '.json', { create: true });
     const writer = await handle.createWritable();
-    await writer.write(JSON.stringify(obj));
+    await writer.write(JSON.stringify(obj, null, 4));
     await writer.close();
 }
 
-/**@typedef {(this: HTMLInputElement) => void} InputChange */
+/**@typedef {HTMLInputElement|HTMLTextAreaElement} Inputy */
+/**@typedef {(this: Inputy) => void} InputChange */
 
 /**
  * @param {HTMLElement} grid 
@@ -313,8 +314,14 @@ function safe_get_obj(o,key) {
  * @returns 
  */
 function input_el(index, field, value, callback) {
-    const input = document.createElement("input");
-    input.type = "text";
+    /**@type {Inputy} */ let input;
+    if(value.length > 30) {
+        input = document.createElement("textarea");
+        input.setAttribute("rows", Math.ceil(value.length/30));
+    } else {
+        input = document.createElement("input");
+        input.type = "text";
+    }
     input.value = value;
     input.setAttribute("data-index", index);
     input.setAttribute("data-field", field);
@@ -327,7 +334,7 @@ function input_el(index, field, value, callback) {
     return div;
 }
 
-/**@this {HTMLInputElement} */
+/**@this {Inputy} */
 function is_missing() {
     this.parentElement.classList.toggle("missing", !this.value);
 }

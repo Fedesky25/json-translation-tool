@@ -54,7 +54,7 @@ button {
 #grid {
     --cols: 1;
     display: grid;
-    grid-template-columns: minmax(25ch, auto) repeat(var(--cols), 25ch);
+    grid-template-columns: minmax(25ch, auto) repeat(var(--cols), 30ch);
     align-items: center;
     margin-left: auto;
     margin-right: auto;
@@ -94,6 +94,7 @@ button {
     grid-column: 1;
     justify-self: start;
     padding-right: 1.5rem;
+    max-width: 35ch;
 }
 .subsec, .ref {
     --nesting: 0;
@@ -110,6 +111,7 @@ button {
     font-weight: 800;
     font-size: 1rem;
 }
+textarea,
 input[type="text"] {
     font-family: inherit;
     font-size: 1rem;
@@ -120,9 +122,23 @@ input[type="text"] {
     background-color: white;
     width: 100%;
 }
+textarea:focus,
 input[type="text"]:focus {
     border-color: cadetblue;
     outline: none;
+}
+textarea {
+    resize: vertical;
+    min-height: 4rem;
+    scrollbar-width: thin;
+}
+textarea::-webkit-scrollbar {
+    width: .5rem;
+}
+textarea::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    box-shadow: inset white 0 0 0 .1rem;
+    border-radius: .25rem;
 }
 #confirm {
     position: fixed;
