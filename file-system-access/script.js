@@ -294,9 +294,10 @@ function row_item(grid, key, field, value, foreign, nesting, callback) {
     } 
     else {
         grid.appendChild(nested_text(value, nesting, "ref"));
-        for(let j=0; j<foreign.length; j++) {
-            grid.appendChild(input_el(j,field,foreign[j][key]||"",callback));
-        }
+        const rows = Math.ceil(value.length/30);
+        const len = foreign.length;
+        if(rows === 1) for(var i=0; i<len; i++) grid.appendChild(setup_input(input_el(), i, field, foreign[i][key]||"", callback));
+        else for(var i=0; i<len; i++) grid.appendChild(setup_input(textarea_el(rows), i, field, foreign[i][key]||"", callback));
     }
 }
 
@@ -360,23 +361,32 @@ function safe_get_arr(o,key,count) {
     return div;
 }
 
+function input_el() {
+    const input = document.createElement("input");
+    input.type = "text";
+    return input;
+}
+
 /**
  * 
+ * @param {number} rows 
+ * @returns 
+ */
+function textarea_el(rows) {
+    const input = document.createElement("textarea");
+    input.setAttribute("rows", rows);
+    return input;
+}
+
+/**
+ * @param {Inputy} input
  * @param {number} index 
  * @param {string} field 
  * @param {string} value 
  * @param {InputChange} callback
  * @returns 
  */
-function input_el(index, field, value, callback) {
-    /**@type {Inputy} */ let input;
-    if(value.length > 30) {
-        input = document.createElement("textarea");
-        input.setAttribute("rows", Math.ceil(value.length/30));
-    } else {
-        input = document.createElement("input");
-        input.type = "text";
-    }
+function setup_input(input, index, field, value, callback) {
     input.value = value;
     input.setAttribute("data-index", index);
     input.setAttribute("data-field", field);
