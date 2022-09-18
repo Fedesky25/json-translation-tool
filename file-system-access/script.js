@@ -182,7 +182,7 @@ async function setup_editor(dir_handle, ref, sel_foreign) {
     grid.style.setProperty("--cols", sel_foreign.length);
     grid.appendChild(head_el(ref.name));
     for(var i=0; i<sel_foreign.length; i++) grid.appendChild(head_el(sel_foreign[i].name));
-    populate(grid, ref_obj, lang_obj, 0, '', set_value);
+    (Array.isArray(ref_obj) ? populate_from_array : populate_from_object)(grid, ref_obj, lang_obj, 0, '', set_value);
 
     selection_form.classList.add("hidden");
     confirm_btn.disabled = false;
@@ -195,9 +195,10 @@ async function setup_editor(dir_handle, ref, sel_foreign) {
         const path = this.getAttribute("data-field").split('.');
         const len = path.length;
         let o = lang_obj[index];
-        for(var i=0; i < len-1; i++) o = o[path[i]];
+        let p;
+        for(var i=0; i < len-1; i++) o = o[p2key(path[i])];
         const v = this.value;
-        o[path[len-1]] = v ? v : undefined;
+        o[p2key(path[len-1])] = v ? v : undefined;
     }
 
     function save(e) {
@@ -221,6 +222,8 @@ async function setup_editor(dir_handle, ref, sel_foreign) {
         );
     }
 }
+
+function p2key(piece) { return piece.startsWith("$+") ? +piece.slice(2) : piece; }
 
 /**
  * 
@@ -246,36 +249,88 @@ async function save_json(dir_handle, code, obj) {
  * @param {string} base 
  * @param {InputChange} callback
  */
- function populate(grid, ref, foreign, nesting, base, callback) {
+ function populate_from_object(grid, ref, foreign, nesting, base, callback) {
+    let value;
     for(var key in ref) {
-        if(typeof ref[key] === "object") {
-            grid.appendChild(nested_text(key, nesting, "subsec"));
-            populate(
-                grid, 
-                ref[key], 
-                foreign.map(f => safe_get_obj(f,key)), 
-                nesting+1,
-                key+'.',
-                callback
-            );
-        } else {
-            grid.appendChild(nested_text(ref[key], nesting, "ref"));
-            for(var i=0; i<foreign.length; i++) {
-                grid.appendChild(input_el(i,base+key,foreign[i][key]||"", callback));
-            }
+        value = ref[key];
+        const field = base + key;
+        row_item(grid, key, field, value, foreign, nesting, callback);
+    }
+}
+
+/**
+ * @param {HTMLElement} grid 
+ * @param {array} ref 
+ * @param {array[]} foreign 
+ * @param {number} nesting 
+ * @param {string} base 
+ * @param {InputChange} callback
+ */
+function populate_from_array(grid, ref, foreign, nesting, base, callback) {
+    let value;
+    const len = ref.length;
+    for(var i=0; i<len; i++) {
+        value = ref[i];
+        const field = base + "$+" + i;
+        row_item(grid, i, field, value, foreign, nesting, callback)
+    }
+}
+
+/**
+ * 
+ * @param {HTMLElement} grid 
+ * @param {string|number} key
+ * @param {string} field 
+ * @param {any} value 
+ * @param {object[]} foreign
+ * @param {number} nesting 
+ * @param {InputChange} callback 
+ */
+function row_item(grid, key, field, value, foreign, nesting, callback) {
+    if(typeof value === "object") {
+        grid.appendChild(nested_text(key+':', nesting, "subsec"));
+        if(Array.isArray(value)) populate_from_array(grid, value, safe_get_arr(foreign, key, value.length), nesting+1, field+'.', callback);
+        else populate_from_object(grid, value, safe_get_obj(foreign, key), nesting+1, field+'.', callback);
+    } 
+    else {
+        grid.appendChild(nested_text(value, nesting, "ref"));
+        for(let j=0; j<foreign.length; j++) {
+            grid.appendChild(input_el(j,field,foreign[j][key]||"",callback));
         }
     }
 }
 
 /**
- * @param {object} o 
+ * @param {object[]} o 
  * @param {string} key 
  * @returns 
  */
 function safe_get_obj(o,key) {
-    var v = o[key];
-    if(typeof v === "object") return v;
-    return (o[key] = {});
+    let v;
+    const len = o.length;
+    const res = new Array(len);
+    for(var i=0; i<len; i++) {
+        v = o[i][key];
+        res[i] = typeof v === "object" && !Array.isArray(v) ? v : (o[i][key] = {});
+    }
+    return res;
+}
+
+/**
+ * @param {object[]} o 
+ * @param {string|number} key
+ * @param {number} count 
+ * @returns 
+ */
+function safe_get_arr(o,key,count) {
+    let v;
+    const len = o.length;
+    const res = new Array(len);
+    for(var i=0; i<len; i++) {
+        v = o[i][key];
+        res[i] = Array.isArray(v) ? v : (o[i][key] = new Array(count));
+    }
+    return res;
 }
 
 /**
