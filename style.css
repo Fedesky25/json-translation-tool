@@ -86,8 +86,8 @@ button {
     font-size: 1.3rem;
     font-weight: 600;
     color: #aaa;
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
+    /* margin-top: 2.5rem;
+    margin-bottom: 1rem; */
     width: fit-content;
 }
 .ref {
@@ -98,7 +98,7 @@ button {
 }
 .subsec, .ref {
     --nesting: 0;
-    padding-left: calc(var(--nesting) * 1rem);
+    padding-left: calc(var(--nesting) * 1.5rem);
 }
 .field { padding: .3rem; }
 .field.missing { position: relative; }
