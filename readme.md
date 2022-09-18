@@ -52,9 +52,7 @@ Example:
 They are the `<locale-code>.json` files inside the subfolders of the project folder, and their typescript interface description would be the following one.
 
 ```ts
-interface Texts {
-    [key: string]: string|Texts;
-} 
+type Texts = string | Texts[] | Record<string, Texts>;
 ```
 
 Example:
@@ -79,3 +77,5 @@ Example:
 ```
 
 The only mandatory file inside each subfolder is the one related to the reference language (`<manifest.reference.code>.json`).
+
+Please note that arrays are currently supported only in the File System Access API version.
